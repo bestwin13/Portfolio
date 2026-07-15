@@ -1,10 +1,9 @@
-name: Deploy Portfolio to GitHub Pages
+name: Deploy GitHub Pages
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,20 +23,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Prepare site
+      - name: Prepare website
         run: |
           mkdir site
-          cp -r portfolio/new/* site/
-          mv "site/index(5).html" site/index.html
+          cp -r new/assets site/
+          cp "new/index (5).html" site/index.html
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
