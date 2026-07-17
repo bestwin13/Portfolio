@@ -29,7 +29,7 @@ jobs:
         run: |
           mkdir site
           cp -r new/assets site/
-          cp "new/index (5).html" site/index.html
+          cp "new/index (14).html" site/index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
