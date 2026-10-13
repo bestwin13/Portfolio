@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -27,6 +27,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Verify website files
+        run: |
+          test -f "new/index (14).html" || {
+            echo "ERROR: Main portfolio HTML file not found."
+            exit 1
+          }
+
+          test -f "new/explore.html" || {
+            echo "ERROR: Explore HTML file not found."
+            exit 1
+          }
+
+          test -d "new/assets" || {
+            echo "ERROR: Assets directory not found."
+            exit 1
+          }
+
       - name: Prepare website
         run: |
           mkdir -p site/assets
@@ -36,6 +53,9 @@ jobs:
           cp "new/index (14).html" site/index.html
 
           cp "new/explore.html" site/explore.html
+
+          echo "Website prepared successfully."
+          find site -maxdepth 2 -type f
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
