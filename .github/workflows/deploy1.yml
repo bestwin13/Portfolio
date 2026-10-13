@@ -6,6 +6,7 @@ on:
       - main
   workflow_dispatch:
 
+
 permissions:
   contents: read
   pages: write
@@ -13,58 +14,28 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Verify website files
-        run: |
-          test -f "new/index (14).html" || {
-            echo "ERROR: Main portfolio HTML file not found."
-            exit 1
-          }
-
-          test -f "new/explore.html" || {
-            echo "ERROR: Explore HTML file not found."
-            exit 1
-          }
-
-          test -d "new/assets" || {
-            echo "ERROR: Assets directory not found."
-            exit 1
-          }
+      - uses: actions/checkout@v4
 
       - name: Prepare website
         run: |
-          mkdir -p site/assets
+          mkdir site
+          cp -r new/assets site/
+          cp "new/index (15).html" site/index.html
 
-          cp -r new/assets/. site/assets/
-
-          cp "new/index (14).html" site/index.html
-
-          cp "new/explore.html" site/explore.html
-
-          echo "Website prepared successfully."
-          find site -maxdepth 2 -type f
-
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
