@@ -9,6 +9,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&display=swap" rel="stylesheet">
+<script>
+  (function(){
+    try{
+      var saved = localStorage.getItem('bwp-theme');
+      if(saved === 'light'){ document.documentElement.classList.add('light-theme'); }
+    }catch(e){}
+  })();
+</script>
 <style>
   :root{
     --bg:#0b0f0c;
@@ -29,6 +37,25 @@
     --font-mono:'JetBrains Mono', monospace;
     --font-serif:'Cormorant Garamond', serif;
     --maxw:1120px;
+    --overlay-rgb:10,11,13;
+    --mx:50%;
+    --my:50%;
+  }
+
+  html.light-theme{
+    --bg:#f4f0e4;
+    --bg-alt:#ece6d5;
+    --surface:#fdfbf4;
+    --surface-hi:#f1ecdd;
+    --border:#ddd4bc;
+    --text:#1c1f18;
+    --text-muted:#454a3d;
+    --text-dim:#6b7060;
+    --accent:#5c7a35;
+    --accent-dim:#3f5726;
+    --accent-soft:rgba(92,122,53,0.12);
+    --accent2:#a97b1f;
+    --overlay-rgb:244,240,228;
   }
 
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -47,9 +74,47 @@
     line-height:1.6;
     overflow-x:hidden;
     position:relative;
+    transition:background-color .5s ease, color .5s ease;
   }
 
-  ::selection{background:var(--accent); color:#0a0b0d;}
+  .theme-toggle{
+    display:flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border-radius:50%;
+    border:1px solid var(--border); background:transparent; color:var(--text-muted);
+    transition:all .35s ease; flex-shrink:0;
+  }
+  .theme-toggle:hover{border-color:var(--accent); color:var(--accent); transform:rotate(-10deg) scale(1.06);}
+  .theme-toggle svg{width:18px; height:18px; transition:all .35s ease;}
+  html.light-theme .theme-toggle{color:var(--accent2); border-color:var(--accent2);}
+  html.light-theme .theme-toggle svg{filter:drop-shadow(0 0 5px rgba(169,123,31,0.5));}
+  .nav-right{display:flex; align-items:center; gap:10px;}
+  #soundIcon .sw{transition:opacity .2s ease;}
+  #soundToggle.muted #soundWave1, #soundToggle.muted #soundWave2{opacity:0;}
+  #soundToggle:not(.muted){color:var(--accent);}
+
+  /* draggable guitar strings (x5) */
+  .string-section{
+    padding:70px 0 90px; text-align:center; border-top:1px solid var(--border); overflow:visible;
+  }
+  .string-label{
+    font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
+    margin-bottom:34px; letter-spacing:0.04em;
+  }
+  .strings-wrap{
+    max-width:640px; margin:0 auto; height:220px; position:relative; touch-action:none;
+  }
+  .strings-wrap svg{width:100%; height:100%; overflow:visible; cursor:pointer;}
+  .string-line{
+    stroke:var(--accent2); fill:none;
+    filter:drop-shadow(0 0 6px rgba(224,184,79,0.35));
+  }
+  .string-hit{stroke:transparent; stroke-width:22px; fill:none;}
+  .string-hint{
+    font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim);
+    margin-top:18px; letter-spacing:0.05em;
+  }
+
+  ::selection{background:var(--accent); color:var(--bg);}
 
   a{color:inherit; text-decoration:none;}
 
@@ -86,8 +151,8 @@
   .site-bg-photo::after{
     content:''; position:absolute; inset:0;
     background:
-      linear-gradient(180deg, rgba(10,11,13,0.10) 0%, rgba(10,11,13,0.30) 55%, var(--bg) 94%),
-      linear-gradient(90deg, rgba(10,11,13,0.30) 0%, rgba(10,11,13,0.03) 40%, rgba(10,11,13,0.30) 100%);
+      linear-gradient(180deg, rgba(var(--overlay-rgb),0.10) 0%, rgba(var(--overlay-rgb),0.30) 55%, var(--bg) 94%),
+      linear-gradient(90deg, rgba(var(--overlay-rgb),0.30) 0%, rgba(var(--overlay-rgb),0.03) 40%, rgba(var(--overlay-rgb),0.30) 100%);
   }
   @keyframes bgKenBurns{
     0%{transform:scale(1) translate(0, 0);}
@@ -105,7 +170,7 @@
   /* ---------- Nav ---------- */
   header{
     position:fixed; top:0; left:0; right:0; z-index:100;
-    background:rgba(10,11,13,0.75);
+    background:rgba(var(--overlay-rgb),0.75);
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--border);
   }
@@ -168,8 +233,11 @@
   .hero-bg::after{
     content:''; position:absolute; inset:0;
     background:
-      linear-gradient(180deg, rgba(10,11,13,0.05) 0%, rgba(10,11,13,0.25) 55%, var(--bg) 96%),
-      linear-gradient(90deg, rgba(10,11,13,0.45) 0%, rgba(10,11,13,0.02) 45%, rgba(10,11,13,0.35) 100%);
+      linear-gradient(180deg, rgba(var(--overlay-rgb),0.05) 0%, rgba(var(--overlay-rgb),0.25) 55%, var(--bg) 96%),
+      linear-gradient(90deg, rgba(var(--overlay-rgb),0.45) 0%, rgba(var(--overlay-rgb),0.02) 45%, rgba(var(--overlay-rgb),0.35) 100%);
+  }
+  html.light-theme .hero-bg::after{
+    background:linear-gradient(180deg, transparent 0%, transparent 85%, var(--bg) 99%);
   }
   .hero-content{position:relative; z-index:1;}
   .hero-tagline-serif{
@@ -199,7 +267,7 @@
     font-family:var(--font-mono); font-size:13px; padding:13px 22px; border-radius:4px;
     border:1px solid var(--border); transition:all .25s ease; display:inline-flex; align-items:center; gap:8px;
   }
-  .btn-primary{background:var(--accent); color:#0a0b0d; border-color:var(--accent); font-weight:600;}
+  .btn-primary{background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:600;}
   .btn-primary:hover{background:#a3c877; transform:translateY(-2px); box-shadow:0 8px 24px -8px rgba(143,174,92,0.5);}
   .btn-ghost{color:var(--text); }
   .btn-ghost:hover{border-color:var(--accent); color:var(--accent); transform:translateY(-2px);}
@@ -433,6 +501,12 @@
   @media (prefers-reduced-motion: reduce){
     #loader{transition:opacity .2s ease;}
   }
+  @media (max-width:480px){
+    .loader-inner{padding:0 24px;}
+    .loader-tag{font-size:11.5px; margin-bottom:14px;}
+    .loader-pct{font-size:3rem;}
+    .loader-label{font-size:9.5px;}
+  }
   .cursor-dot{
     position:fixed; top:0; left:0; width:10px; height:10px; border-radius:50%;
     background:#ffffff; pointer-events:none; z-index:9999;
@@ -451,6 +525,23 @@
   @media (pointer: coarse), (prefers-reduced-motion: reduce){
     .cursor-dot{display:none;}
   }
+
+  /* lantern: dark-mode-only spotlight that follows the cursor */
+  #lantern{
+    position:fixed; inset:0; z-index:9000; pointer-events:none;
+    opacity:0; transition:opacity .5s ease;
+    background:
+      radial-gradient(circle 70px at var(--mx) var(--my), rgba(224,184,79,0.20), transparent 70%),
+      radial-gradient(circle 210px at var(--mx) var(--my),
+        transparent 0%, transparent 34%,
+        rgba(var(--overlay-rgb),0.58) 62%,
+        rgba(var(--overlay-rgb),0.95) 100%);
+  }
+  #lantern.active{opacity:1;}
+  html.light-theme #lantern{display:none;}
+  @media (pointer: coarse), (prefers-reduced-motion: reduce){
+    #lantern{display:none;}
+  }
 </style>
 </head>
 <body>
@@ -466,6 +557,7 @@
 
 
 <div class="cursor-dot" id="cursorDot"></div>
+<div id="lantern"></div>
 
 <svg class="grain" xmlns="http://www.w3.org/2000/svg">
   <filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/></filter>
@@ -484,15 +576,32 @@
       <li><a href="#gallery">gallery</a></li>
       <li><a href="#experience">experience</a></li>
       <li><a href="#contact">contact</a></li>
+      <li><a href="explore.html">explore</a></li>
     </ul>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">menu</button>
+    <div class="nav-right">
+      <button class="theme-toggle" id="soundToggle" aria-label="Toggle sound" title="Toggle sound">
+        <svg id="soundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 9v6h4l5 5V4L8 9H4Z"></path>
+          <path id="soundWave1" d="M16.5 8.5a5 5 0 0 1 0 7"></path>
+          <path id="soundWave2" d="M19 6a9 9 0 0 1 0 12"></path>
+        </svg>
+      </button>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+        <svg id="bulbIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18h6"></path>
+          <path d="M10 22h4"></path>
+          <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2.1V17h6v-.2c0-.9.4-1.6 1-2.1A7 7 0 0 0 12 2Z"></path>
+        </svg>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">menu</button>
+    </div>
   </nav>
 </header>
 
 <!-- HERO -->
 <section class="hero" style="border-top:none; padding-bottom:60px;">
   <div class="hero-bg">
-    <img src="assets/Firefly (1).jpg" alt="" id="heroBgImg">
+    <img src="assets/portrait.png" alt="" id="heroBgImg">
   </div>
   <div class="hero-grid"></div>
   <div class="wrap hero-content">
@@ -504,6 +613,7 @@
     <div class="hero-cta">
       <a href="#projects" class="btn btn-primary">View Projects →</a>
       <a href="#gallery" class="btn btn-ghost">Open Gallery</a>
+      <a href="explore.html" class="btn btn-ghost">Explore the game ▸</a>
     </div>
   </div>
   <div class="scroll-hint"><span class="line"></span>scroll</div>
@@ -521,7 +631,7 @@
         <p>Outside the terminal, I shoot <strong>photography and videography</strong> — a different kind of pipeline, where the raw input is light instead of code, and the output is a frame instead of a build.</p>
       </div>
       <div class="reveal">
-        <div class="stat-card"><div class="k">Recent Experience</div><div class="v">DevOps Intern @ Caddayn</div></div>
+        <div class="stat-card"><div class="k">Currently</div><div class="v">DevOps Intern @ Caddayn</div></div>
         <div class="stat-card"><div class="k">Education</div><div class="v">B.Tech CS · KTU · CGPA 7.27</div></div>
         <div class="stat-card"><div class="k">Based in</div><div class="v">Thrissur, Kerala, India</div></div>
       </div>
@@ -622,6 +732,28 @@
   </div>
 </section>
 
+<!-- STRING INTERLUDE -->
+<section class="string-section">
+  <div class="wrap">
+    <div class="string-label">$ strum --strings=5 --mode=hover-or-drag</div>
+    <div class="strings-wrap" id="stringsWrap">
+      <svg viewBox="0 0 640 220" preserveAspectRatio="none">
+        <path class="string-hit"  data-i="0" d="M0,20 L640,20"></path>
+        <path class="string-line" data-i="0" d="M0,20 L640,20" stroke-width="3"></path>
+        <path class="string-hit"  data-i="1" d="M0,65 L640,65"></path>
+        <path class="string-line" data-i="1" d="M0,65 L640,65" stroke-width="2.6"></path>
+        <path class="string-hit"  data-i="2" d="M0,110 L640,110"></path>
+        <path class="string-line" data-i="2" d="M0,110 L640,110" stroke-width="2.2"></path>
+        <path class="string-hit"  data-i="3" d="M0,155 L640,155"></path>
+        <path class="string-line" data-i="3" d="M0,155 L640,155" stroke-width="1.8"></path>
+        <path class="string-hit"  data-i="4" d="M0,200 L640,200"></path>
+        <path class="string-line" data-i="4" d="M0,200 L640,200" stroke-width="1.4"></path>
+      </svg>
+    </div>
+    <div class="string-hint">drag a string to bend and pluck it — or just glide your cursor across all five</div>
+  </div>
+</section>
+
 <!-- GALLERY -->
 <section id="gallery">
   <div class="wrap">
@@ -639,6 +771,7 @@
       <!-- frames injected by JS -->
     </div>
 
+    <div class="gallery-note">// TODO(bestwin): drop your own photos/video thumbnails into the assets/gallery/ folder using these exact filenames: photo-1.jpg, photo-2.jpg, photo-3.jpg, photo-4.jpg, video-1.jpg, video-2.jpg — same name, your file, and they'll appear here automatically. Want more than 6? Add new entries to the galleryItems array in the script below.</div>
   </div>
 </section>
 
@@ -649,7 +782,7 @@
     <h2 class="section-title reveal">Experience &amp; Education</h2>
     <div class="timeline reveal">
       <div class="tl-item">
-        <div class="tl-date">Jan 2026 - April 2026</div>
+        <div class="tl-date">Present</div>
         <div class="tl-role">DevOps Intern</div>
         <div class="tl-org">Caddayn</div>
         <div class="tl-desc">
@@ -679,7 +812,7 @@
         <div class="tl-desc">Completed and verified via NPTEL's official archive.</div>
       </div>
       <div class="tl-item">
-        <div class="tl-date">Oct 2022 — May 2026</div>
+        <div class="tl-date">Oct 2022 — Present</div>
         <div class="tl-role">B.Tech, Computer Science</div>
         <div class="tl-org">Sahrdaya College of Engineering &amp; Technology · KTU</div>
         <div class="tl-desc">Current CGPA: 7.27. Coursework: Data Structures, OOPS, Operating Systems, System Software, Programming.</div>
@@ -728,9 +861,13 @@
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.documentElement.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
 
     function finish(){
       document.documentElement.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
       loader.classList.add('hide');
       setTimeout(() => loader.remove(), 700);
     }
@@ -767,6 +904,17 @@
       }
     }
     requestAnimationFrame(frame);
+  })();
+
+  // ---- Theme toggle (light/dark via bulb icon) ----
+  (function(){
+    const btn = document.getElementById('themeToggle');
+    if(!btn) return;
+    const root = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isLight = root.classList.toggle('light-theme');
+      try{ localStorage.setItem('bwp-theme', isLight ? 'light' : 'dark'); }catch(e){}
+    });
   })();
 
   document.getElementById('year').textContent = new Date().getFullYear();
@@ -806,6 +954,34 @@
       }, 150);
     });
   });
+
+  // ---- Lantern: dark-mode spotlight that follows the cursor ----
+  (function(){
+    const lantern = document.getElementById('lantern');
+    if(!lantern) return;
+    const isFine = window.matchMedia('(pointer: fine)').matches;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!isFine || reduced) return;
+
+    const root = document.documentElement;
+    let ticking = false;
+
+    function setPos(x, y){
+      root.style.setProperty('--mx', x + 'px');
+      root.style.setProperty('--my', y + 'px');
+      ticking = false;
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      lantern.classList.add('active');
+      if(!ticking){
+        requestAnimationFrame(() => setPos(e.clientX, e.clientY));
+        ticking = true;
+      }
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', () => lantern.classList.remove('active'));
+  })();
 
   // ---- Custom cursor: small white circle with smooth trailing follow ----
   (function(){
@@ -886,20 +1062,210 @@
   }, { passive:true });
   updateHeroScroll();
 
+  // ---- Audio: synthesized intro tune + guitar plucks (no external files) ----
+  const AudioModule = (function(){
+    let ctx = null, master = null, enabled = false, initialized = false;
+    let lastPluckTime = 0;
+
+    // A minor pentatonic-ish, warm low-mid range — plays nicely as "guitar" notes
+    const scale = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63, 293.66, 329.63, 392.00];
+
+    function ensureCtx(){
+      if(!ctx){
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if(!AC) return false;
+        ctx = new AC();
+        master = ctx.createGain();
+        master.gain.value = 0.5;
+        master.connect(ctx.destination);
+      }
+      if(ctx.state === 'suspended') ctx.resume();
+      return true;
+    }
+
+    function pluck(freq, when, vol, decay){
+      if(!enabled || !ctx) return;
+      const t = ctx.currentTime + (when || 0);
+      const v = vol || 0.16;
+      const dec = decay || 0.9;
+
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, t);
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(freq * 1.004, t);
+      osc2.detune.setValueAtTime(-6, t);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(v, t + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0008, t + dec);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(freq * 7, t);
+      filter.frequency.exponentialRampToValueAtTime(freq * 1.3, t + dec * 0.6);
+      filter.Q.value = 0.6;
+
+      osc.connect(filter); osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+
+      osc.start(t); osc2.start(t);
+      osc.stop(t + dec + 0.1); osc2.stop(t + dec + 0.1);
+    }
+
+    function scrollPluck(){
+      if(!enabled) return;
+      const now = performance.now();
+      if(now - lastPluckTime < 350) return; // throttle
+      lastPluckTime = now;
+      const note = scale[Math.floor(Math.random() * scale.length)];
+      pluck(note, 0, 0.09, 1.1);
+    }
+
+    function setEnabled(v){
+      enabled = v;
+      if(master) master.gain.value = v ? 0.5 : 0;
+    }
+
+    function toggle(){
+      if(!initialized){
+        const ok = ensureCtx();
+        if(!ok) return false;
+        initialized = true;
+        setEnabled(true);
+        return true;
+      }
+      setEnabled(!enabled);
+      if(enabled) ensureCtx();
+      return enabled;
+    }
+
+    return { toggle, pluck, scrollPluck, isEnabled: () => enabled, isInit: () => initialized };
+  })();
+
+  (function(){
+    const btn = document.getElementById('soundToggle');
+    if(!btn) return;
+    btn.classList.add('muted');
+    btn.addEventListener('click', () => {
+      const on = AudioModule.toggle();
+      btn.classList.toggle('muted', !on);
+    });
+  })();
+
+  // ---- Draggable + hover-to-play guitar strings (x5) ----
+  (function(){
+    const wrap = document.getElementById('stringsWrap');
+    if(!wrap) return;
+    const lines = Array.from(wrap.querySelectorAll('.string-line'));
+    const hits = Array.from(wrap.querySelectorAll('.string-hit'));
+    if(!lines.length) return;
+
+    const W = 640;
+    // real guitar tuning (low to high), one per string, top string = lowest
+    const NOTE_FREQS = [82.41, 110.00, 146.83, 196.00, 246.94]; // E2 A2 D3 G3 B3
+    const BASE_Y = [20, 65, 110, 155, 200];
+
+    const strings = lines.map((line, i) => ({
+      line, hit: hits[i], y: BASE_Y[i], freq: NOTE_FREQS[i],
+      dragging: false, springFrame: null, lastHover: 0
+    }));
+
+    function setCurve(s, offset){
+      const cy = s.y + offset;
+      s.line.setAttribute('d', `M0,${s.y} Q${W/2},${cy} ${W},${s.y}`);
+      s.hit.setAttribute('d', `M0,${s.y} Q${W/2},${cy} ${W},${s.y}`);
+    }
+
+    function pointFromEvent(e, s){
+      const rect = wrap.getBoundingClientRect();
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const relY = (clientY - rect.top) * (220 / rect.height);
+      return relY - s.y;
+    }
+
+    function springBack(s, startOffset){
+      let y = startOffset, v = 0;
+      const stiffness = 0.22, damping = 0.78;
+      cancelAnimationFrame(s.springFrame);
+      function step(){
+        const force = -stiffness * y;
+        v = (v + force) * damping;
+        y += v;
+        setCurve(s, y);
+        if(Math.abs(y) > 0.5 || Math.abs(v) > 0.5){
+          s.springFrame = requestAnimationFrame(step);
+        } else {
+          setCurve(s, 0);
+        }
+      }
+      step();
+    }
+
+    function playString(s, strength){
+      if(!AudioModule.isEnabled()) return;
+      const st = Math.max(0.15, strength);
+      AudioModule.pluck(s.freq, 0, 0.11 + st * 0.1, 1.4 + st * 0.6);
+    }
+
+    strings.forEach((s) => {
+      function onDown(e){
+        s.dragging = true;
+        cancelAnimationFrame(s.springFrame);
+        e.preventDefault();
+      }
+      function onMove(e){
+        if(!s.dragging) return;
+        const y = Math.max(-30, Math.min(30, pointFromEvent(e, s)));
+        setCurve(s, y);
+      }
+      function onUp(e){
+        if(!s.dragging) return;
+        s.dragging = false;
+        const y = Math.max(-30, Math.min(30, pointFromEvent(e, s)));
+        const strength = Math.min(1, Math.abs(y) / 30);
+        if(strength > 0.04) playString(s, strength);
+        springBack(s, y);
+      }
+      function onEnter(){
+        if(s.dragging) return;
+        const now = performance.now();
+        if(now - s.lastHover < 220) return; // avoid double-fire jitter
+        s.lastHover = now;
+        playString(s, 0.35);
+        // tiny visual flick even on a light hover-pass
+        setCurve(s, 6);
+        springBack(s, 6);
+      }
+
+      s.hit.addEventListener('mousedown', onDown);
+      s.hit.addEventListener('mouseenter', onEnter);
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+      s.hit.addEventListener('touchstart', onDown, { passive: false });
+      window.addEventListener('touchmove', onMove, { passive: true });
+      window.addEventListener('touchend', onUp);
+    });
+  })();
+
   // ---- Scroll reveal ----
   const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); AudioModule.scrollPluck(); io.unobserve(e.target); } });
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => io.observe(el));
 
   // ---- Gallery data (placeholders — swap src with your own images/video thumbnails) ----
   const galleryItems = [
-    { cat:'photo', wide:false, title:'Field', meta:'f/1.8 · 50mm · ISO 200', src:'https://github.com/bestwin13/Portfolio/blob/main/new/gallery/IMG_0271.jpg?raw=true' },
-    { cat:'photo', wide:false,  title:'Pink Sky', meta:'f/1.8 · 50mm · ISO 200', src:'https://github.com/bestwin13/Portfolio/blob/main/new/gallery/IMG_2688.jpg?raw=true' },
-    { cat:'photo', wide:false, title:'Blue Sky', meta:'f/2.8 · 35mm · ISO 400', src:'https://github.com/bestwin13/Portfolio/blob/main/new/gallery/IMG_0801.jpg?raw=true' },
-    { cat:'photo', wide:false, title:'Old clock', meta:'f/4 · 24mm · ISO 100', src:'https://github.com/bestwin13/Portfolio/blob/main/new/gallery/IMG_6456.jpg?raw=true' },
-    { cat:'photo', wide:false,  title:'yellow Flower', meta:'f/1.8 · 50mm · ISO 200', src:'https://github.com/bestwin13/Portfolio/blob/main/new/gallery/IMG_2974.jpg?raw=true' },
-    { cat:'photo', wide:false, title:'Church festival', meta:'f/1.4 · 85mm · ISO 800', src:'https://github.com/bestwin13/Portfolio/blob/main/new/gallery/IMG_6614.jpg?raw=true' },
+    { cat:'photo', wide:false, title:'Golden Hour Portrait', meta:'f/1.8 · 50mm · ISO 200', src:'assets/gallery/photo-1.jpg' },
+    { cat:'video', wide:true,  title:'Coastal Timelapse', meta:'4K · 24fps · 3:12', src:'assets/gallery/video-1.jpg' },
+    { cat:'photo', wide:false, title:'Street, Thrissur', meta:'f/2.8 · 35mm · ISO 400', src:'assets/gallery/photo-2.jpg' },
+    { cat:'photo', wide:false, title:'Monsoon Study', meta:'f/4 · 24mm · ISO 100', src:'assets/gallery/photo-3.jpg' },
+    { cat:'video', wide:true,  title:'Campus Reel', meta:'1080p · 30fps · 1:48', src:'assets/gallery/video-2.jpg' },
+    { cat:'photo', wide:false, title:'Low Light Portrait', meta:'f/1.4 · 85mm · ISO 800', src:'assets/gallery/photo-4.jpg' },
   ];
 
   const grid = document.getElementById('galleryGrid');
