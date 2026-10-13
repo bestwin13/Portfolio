@@ -18,11 +18,11 @@ concurrency:
 
 jobs:
   deploy:
+    runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -31,9 +31,15 @@ jobs:
       - name: Prepare website
         run: |
           mkdir -p site/assets
+
           cp -r new/assets/. site/assets/
+
           cp "new/index (14).html" site/index.html
-          cp new/explore.html site/explore.html
+
+          cp "new/explore.html" site/explore.html
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
