@@ -1,3 +1,4 @@
+```yaml
 name: Deploy GitHub Pages
 
 on:
@@ -5,7 +6,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-
 
 permissions:
   contents: read
@@ -25,17 +25,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
       - name: Prepare website
         run: |
-          mkdir site
-          cp -r new/assets site/
+          mkdir -p site/assets
+          cp -r new/assets/. site/assets/
           cp "new/index (14).html" site/index.html
+          cp new/explore.html site/explore.html
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
+```
